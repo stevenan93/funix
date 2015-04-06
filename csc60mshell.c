@@ -47,8 +47,13 @@ int main(void)
  /* Loop forever to wait and process commands */
  while (1) {
   /* Step 1: Name your shell: csc60mshell - m for mini shell */ 
-  printf("........> ");
+  printf("csc60msh> ");
   fgets(cmdline, MAXLINE, stdin);
+  if(strcmp(cmdline, "\n") == 0)
+  {
+     continue;
+  }
+
   /* Step 1: If user hits enter key without a command, continue to loop again at the beginning */
   /*         Hint: look up for they keyword "continue" in C */
   /* Step 1: Call parseline to build argc/argv: argc/argv parameters declared above */ 
