@@ -43,6 +43,8 @@ int main(void)
  int argc;
  int status;
  pid_t pid;
+ char tempbuf[1056];
+ char *temp = "";
 
  /* Loop forever to wait and process commands */
  while (1) {
@@ -60,12 +62,27 @@ int main(void)
   }
   else if(strcmp(argv[0], "pwd") == 0)
   {
-     printf("You entered in that peepee\n");
+     printf("current directory: %s\n", getenv("PWD"));
      continue;
   }
   else if(strcmp(argv[0], "cd") == 0)
   {
-     printf("You entered in the CD\n");
+     if(argv[1] == NULL)
+     {
+        temp = getenv("HOME");
+        chdir(temp);
+        setenv("PWD", temp, 1);
+     }
+     else
+     {
+        if(chdir(argv[1]) != 0)
+        {
+            printf("No such directory: %s\n", argv[1]);
+            continue;
+        }
+        getcwd(tempbuf, 1056);
+        setenv("PWD", tempbuf, 1);
+     }
      continue;
   }
   /* Step 1: If user hits enter key without a command, continue to loop again at the beginning */
