@@ -49,11 +49,25 @@ int main(void)
   /* Step 1: Name your shell: csc60mshell - m for mini shell */ 
   printf("csc60msh> ");
   fgets(cmdline, MAXLINE, stdin);
+  int argc = parseline(cmdline, argv);
   if(strcmp(cmdline, "\n") == 0)
   {
      continue;
   }
-
+  else if(strcmp(argv[0], "exit") == 0)
+  {
+     return 0;
+  }
+  else if(strcmp(argv[0], "pwd") == 0)
+  {
+     printf("You entered in that peepee\n");
+     continue;
+  }
+  else if(strcmp(argv[0], "cd") == 0)
+  {
+     printf("You entered in the CD\n");
+     continue;
+  }
   /* Step 1: If user hits enter key without a command, continue to loop again at the beginning */
   /*         Hint: look up for they keyword "continue" in C */
   /* Step 1: Call parseline to build argc/argv: argc/argv parameters declared above */ 
