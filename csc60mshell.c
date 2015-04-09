@@ -17,7 +17,17 @@ void process_input(int argc, char **argv) {
   /*  perror("Shell Program");                                    */
   /*  _exit(-1);                                                  */
   /* }                                                            */
-  /* Problem 2: Handle redirection operators: < , or  >, or both  */ 
+  /* Problem 2: Handle redirection operators: < , or  >, or both  */
+  if(argc > 1)
+  {
+    printf("tryna do somthing bud amirite\n");
+    _exit(0);
+  } 
+  if(execvp(argv[0], argv) == -1)
+  {
+    perror("Shell program error\n");
+    _exit(-1);
+  }
 }
 
 /* ----------------------------------------------------------------- */
@@ -100,7 +110,7 @@ int main(void)
     /* I am parent process */
     if (wait(&status) == -1)
       perror("Shell Program error");
-    else
-      printf("Child returned status: %d\n",status);
+//    else
+  //    printf("Child returned status: %d\n",status);
  }
 }
