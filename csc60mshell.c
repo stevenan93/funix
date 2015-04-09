@@ -20,13 +20,32 @@ void process_input(int argc, char **argv) {
   /* Problem 2: Handle redirection operators: < , or  >, or both  */
   if(argc > 1)
   {
-    printf("tryna do somthing bud amirite\n");
-    _exit(0);
+    if(strcmp(argv[1], ">") == 0)
+    {
+        printf("I farted\n");
+        int fileID = open(argv[2], O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+        close(1);
+        if(fileID < 0)
+        {
+            perror("Create file error\n");
+            _exit(-1);
+        }
+        dup2(fileID, 1);
+        close(fileID);
+        argv[1] = NULL;      
+     }
+     else if(strcmp(argv[1], "<") == 0)
+     {
+        int fileID = open(argv[2], O_RDONLY);
+        dup2(fileID, 0);
+        argv[1] = argv[2];
+        argv[2] = NULL;   
+     }
   } 
   if(execvp(argv[0], argv) == -1)
   {
-    perror("Shell program error\n");
-    _exit(-1);
+     perror("Shell program error\n");
+     _exit(-1);
   }
 }
 
