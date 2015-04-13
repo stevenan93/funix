@@ -1,2 +1,2 @@
 all:
-	gcc -o funix csc60mshell.c 
+	gcc -o funix -g csc60mshell.c 

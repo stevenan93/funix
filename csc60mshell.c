@@ -20,14 +20,18 @@ void process_input(int argc, char **argv) {
   /* Problem 2: Handle redirection operators: < , or  >, or both  */
   if(argc > 1)
   {
+    if(argc < 3)
+    {
+        printf("Redirection error\n");
+        _exit(-1);
+    }
     if(strcmp(argv[1], ">") == 0)
     {
-        printf("I farted\n");
         int fileID = open(argv[2], O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
         close(1);
         if(fileID < 0)
         {
-            perror("Create file error\n");
+            printf("Create file error\n");
             _exit(-1);
         }
         dup2(fileID, 1);
@@ -37,6 +41,11 @@ void process_input(int argc, char **argv) {
      else if(strcmp(argv[1], "<") == 0)
      {
         int fileID = open(argv[2], O_RDONLY);
+        if(fileID < 0)
+        {
+            printf("No such file %s\n", argv[2]);
+            _exit(-1);
+        }
         dup2(fileID, 0);
         argv[1] = argv[2];
         argv[2] = NULL;   
@@ -44,7 +53,7 @@ void process_input(int argc, char **argv) {
   } 
   if(execvp(argv[0], argv) == -1)
   {
-     perror("Shell program error\n");
+     printf("funix: %s: command not found\n", argv[0] );
      _exit(-1);
   }
 }
