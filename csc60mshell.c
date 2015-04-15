@@ -20,14 +20,26 @@ void process_input(int argc, char **argv) {
   /* Problem 2: Handle redirection operators: < , or  >, or both  */
   if(argc > 1)
   {
-    if(argc < 3)
+    int gPosition, lPosition, i;
+    for(i = 0; i < argc; i++)
     {
-        printf("Redirection error\n");
-        _exit(-1);
+       if(strcmp(argv[i], ">") == 0)
+       {
+            gPosition = i;
+       }
+       else if(strcmp(argv[i], "<") == 0)
+       {
+            lPosition = i;
+       }
     }
-    if(strcmp(argv[1], ">") == 0)
+    if(strcmp(argv[gPosition], ">") == 0)
     {
-        int fileID = open(argv[2], O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+         if(argc < 3)
+         {
+            printf("Redirection error\n");
+            _exit(-1);
+         }
+        int fileID = open(argv[gPosition + 1], O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
         close(1);
         if(fileID < 0)
         {
@@ -36,10 +48,16 @@ void process_input(int argc, char **argv) {
         }
         dup2(fileID, 1);
         close(fileID);
-        argv[1] = NULL;      
+        argv[gPosition] = NULL;      
      }
      else if(strcmp(argv[1], "<") == 0)
      {
+        if(argc < 3)
+        {
+            printf("Redirection error\n");
+            _exit(-1);
+        }
+        
         int fileID = open(argv[2], O_RDONLY);
         if(fileID < 0)
         {
