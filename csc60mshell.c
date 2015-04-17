@@ -5,22 +5,54 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include<signal.h>
 
 #define MAXLINE 80
 #define MAXARGS 20
-
+#define MAXCMD 1024
+void handle_SIGINT()
+{
+	
+}
 void process_input(int argc, char **argv) {
-  /* Problem 1: perform system call execvp to execute command     */ 
-  /*            No special operator(s) detected                   */
-  /* Hint: Please be sure to review execvp.c sample program       */
-  /* if (........ == -1) {                                        */  
-  /*  perror("Shell Program");                                    */
-  /*  _exit(-1);                                                  */
-  /* }                                                            */
-  /* Problem 2: Handle redirection operators: < , or  >, or both  */
   if(argc > 1)
   {
-    int gPosition, lPosition, i;
+    int gPosition = 0, lPosition = 0, i, pPos = 0;
+	int pipeFlag = 0;
+	for(i = 0; i < argc; i++)
+	{
+		if(strcmp(argv[i], "|") == 0)
+		{
+			pPos = i;
+			pipeFlag = 1;
+		}
+	}
+	if(pipeFlag)
+	{
+		if(argc < 3)
+		{
+			printf("csc60shell: pipe syntax error\n");
+			_exit(EXIT_FAILURE);
+		}
+		int fd[2];
+		pid_t childpid;
+		pipe(fd);
+		if((childpid = fork()) == 0)
+		{
+			dup2(fd[1], STDOUT_FILENO);
+			close(fd[0]);
+			close(fd[1]);
+			argv[pPos] = NULL;
+			execvp(argv[0], argv);
+		}
+		else
+		{
+			dup2(fd[0], STDIN_FILENO);
+			close(fd[0]);
+			close(fd[1]);
+			execvp(argv[pPos + 1], argv + pPos + 1);
+		}
+	}
     for(i = 0; i < argc; i++)
     {
        if(strcmp(argv[i], ">") == 0)
@@ -36,7 +68,7 @@ void process_input(int argc, char **argv) {
     {
          if(argc < 3)
          {
-            printf("Redirection error\n");
+            printf("Output redirection error\n");
             _exit(-1);
          }
         int fileID = open(argv[gPosition + 1], O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
@@ -54,7 +86,7 @@ void process_input(int argc, char **argv) {
      {
         if(argc < 3)
         {
-            printf("Redirection error\n");
+            printf("Input Redirection error\n");
             _exit(-1);
         }
         
@@ -71,6 +103,8 @@ void process_input(int argc, char **argv) {
   } 
   if(execvp(argv[0], argv) == -1)
   {
+	 if(strcmp(argv[0], NULL) == 0)
+		_exit(0);
      printf("funix: %s: command not found\n", argv[0] );
      _exit(-1);
   }
@@ -98,13 +132,17 @@ int main(void)
  char *argv[MAXARGS];
  int argc;
  int status;
+ int maxcmd = MAXCMD;
  pid_t pid;
  char tempbuf[1056];
  char *temp = "";
-
- /* Loop forever to wait and process commands */
+ struct sigaction sig_action;
+ sigemptyset( &sig_action.sa_mask );
+ sig_action.sa_handler = SIG_IGN;
+ sig_action.sa_flags = 0;
+ sigaction(SIGINT,&sig_action, NULL);
+ 
  while (1) {
-  /* Step 1: Name your shell: csc60mshell - m for mini shell */ 
   printf("csc60msh> ");
   fgets(cmdline, MAXLINE, stdin);
   int argc = parseline(cmdline, argv);
@@ -141,22 +179,18 @@ int main(void)
      }
      continue;
   }
-  /* Step 1: If user hits enter key without a command, continue to loop again at the beginning */
-  /*         Hint: look up for they keyword "continue" in C */
-  /* Step 1: Call parseline to build argc/argv: argc/argv parameters declared above */ 
-  /* Step 1: Handle build-in command: exit, pwd, or cd - if detect one              */
-  /* Step 1: Else, fork off a process */ 
+
   pid = fork();
   if (pid == -1) 
     perror("Shell Program fork error");
-  else if (pid == 0) 
-    /* I am child process. I will execute the command, call: execvp */
+  else if (pid == 0) 		//child
+  {
+	 sigaction( SIGINT, &sig_action, NULL );
+     sig_action.sa_handler = SIG_DFL;
     process_input(argc, argv);
-  else 
-    /* I am parent process */
+  }
+  else 						//parent process
     if (wait(&status) == -1)
       perror("Shell Program error");
-//    else
-  //    printf("Child returned status: %d\n",status);
  }
 }
