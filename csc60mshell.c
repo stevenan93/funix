@@ -101,13 +101,15 @@ void process_input(int argc, char **argv) {
         argv[2] = NULL;   
      }
   } 
+
   if(execvp(argv[0], argv) == -1)
   {
-	 if(strcmp(argv[0], NULL) == 0)
-		_exit(0);
+	 //if(strcmp(argv[0], NULL) == 0)
+		//_exit(0);
      printf("funix: %s: command not found\n", argv[0] );
      _exit(-1);
   }
+
 }
 
 /* ----------------------------------------------------------------- */
@@ -128,69 +130,89 @@ int parseline(char *cmdline, char **argv)
 /* ----------------------------------------------------------------- */
 int main(void)
 {
- char cmdline[MAXLINE];
- char *argv[MAXARGS];
- int argc;
- int status;
- int maxcmd = MAXCMD;
- pid_t pid;
- char tempbuf[1056];
- char *temp = "";
- struct sigaction sig_action;
- sigemptyset( &sig_action.sa_mask );
- sig_action.sa_handler = SIG_IGN;
- sig_action.sa_flags = 0;
- sigaction(SIGINT,&sig_action, NULL);
  
- while (1) {
-  printf("csc60msh> ");
-  fgets(cmdline, MAXLINE, stdin);
-  int argc = parseline(cmdline, argv);
-  if(strcmp(cmdline, "\n") == 0)
-  {
-     continue;
-  }
-  else if(strcmp(argv[0], "exit") == 0)
-  {
-     return 0;
-  }
-  else if(strcmp(argv[0], "pwd") == 0)
-  {
-     printf("current directory: %s\n", getenv("PWD"));
-     continue;
-  }
-  else if(strcmp(argv[0], "cd") == 0)
-  {
-     if(argv[1] == NULL)
-     {
-        temp = getenv("HOME");
-        chdir(temp);
-        setenv("PWD", temp, 1);
-     }
-     else
-     {
-        if(chdir(argv[1]) != 0)
-        {
-            printf("No such directory: %s\n", argv[1]);
-            continue;
-        }
-        getcwd(tempbuf, 1056);
-        setenv("PWD", tempbuf, 1);
-     }
-     continue;
+	 char cmdline[MAXLINE];
+	 char *argv[MAXARGS];
+	 int argc;
+	 int status;
+	 int maxcmd = MAXCMD;
+	 pid_t pid;
+	 char tempbuf[1056];
+	 char *temp = "";
+	 struct sigaction sig_action;
+	 sigemptyset( &sig_action.sa_mask );
+	 sig_action.sa_handler = SIG_IGN;
+	 sigemptyset(&sig_action.sa_mask);
+	 sig_action.sa_flags = 0;
+	 sigaction(SIGINT,&sig_action, NULL);
+ 
+	while (1) {
+		  printf("csc60msh> ");
+		  fgets(cmdline, MAXLINE, stdin);
+		  int argc = parseline(cmdline, argv);
+		  if(strcmp(cmdline, "\n") == 0)
+		  {
+				continue;
+		  }
+		  else if(strcmp(argv[0], "exit") == 0)
+		  {
+				return 0;
+		  }
+		  else if(strcmp(argv[0], "pwd") == 0)
+		  {
+				printf("current directory: %s\n", getenv("PWD"));
+				continue;
+		  }
+		  else if(strcmp(argv[0], "cd") == 0)
+		  {
+		  if(argv[1] == NULL)
+		  {
+			 temp = getenv("HOME");
+			 chdir(temp);
+			 setenv("PWD", temp, 1);
+		  }
+		  else
+          {
+			if(chdir(argv[1]) != 0)
+			{
+				printf("No such directory: %s\n", argv[1]);
+				continue;
+			}
+			getcwd(tempbuf, 1056);
+			setenv("PWD", tempbuf, 1);
+		  }
+		  
+		  continue;
   }
 
   pid = fork();
   if (pid == -1) 
-    perror("Shell Program fork error");
+  {
+	  perror("Shell program fork error\n");
+  }
   else if (pid == 0) 		//child
   {
 	 sigaction( SIGINT, &sig_action, NULL );
      sig_action.sa_handler = SIG_DFL;
-    process_input(argc, argv);
+     process_input(argc, argv);
   }
-  else 						//parent process
+  else 	
+  {	  //parent process
     if (wait(&status) == -1)
       perror("Shell Program error");
+	if(WIFEXITED(status))
+	{
+		printf("normal termination with status (%d)\n", WEXITSTATUS(status));
+		
+	}
+	else if(WIFSIGNALED(status))
+	{
+		printf("abnormal termination, signal(%d)\n", WTERMSIG(status));
+	}
+	else if(WIFSTOPPED(status))
+	{
+		printf("child stopped, signal(%d)\n", WIFSTOPPED(status));
+	}
+  }
  }
 }

@@ -1,0 +1,68 @@
+Script started on Fri, Apr 17, 2015  7:13:48 PM
+]0;/cygdrive/c/Users/ansm/Downloads/funix
+[32mansm@x220 [33m/cygdrive/c/Users/ansm/Downloads/funix[0m
+$ ./funix.exe
+csc60msh> ls
+csc60mshell.c  funix.exe.stackdump  prompt.pdf	read.c	  testexecvp.c
+fart	       makefile		    q		read.exe  typescript
+funix.exe      o		    read	redir.c   waitpid.c
+normal termination with status (0)
+csc60msh> ls -al | sopr  rt -k5
+total 978
+drwxrwx---+ 1 ansm None      0 Apr 17 15:42 .git
+drwxrwx---+ 1 ansm None      0 Apr 17 18:50 ..
+drwxrwx---+ 1 ansm None      0 Apr 17 19:13 .
+-rw-rwxr--+ 1 ansm None      0 Apr 17 19:13 typescript
+-rwxrwx---+ 1 ansm None     39 Apr 16 16:15 makefile
+-rw-rwx---+ 1 ansm None    106 Apr 16 16:24 o
+-rw-rwx---+ 1 ansm None    125 Apr 17 19:01 fart
+-rwxrwx---+ 1 ansm None    378 Apr 16 16:15 read.c
+-rwxrwx---+ 1 ansm None    408 Apr 16 16:15 testexecvp.c
+-rwxrwx---+ 1 ansm None    630 Apr 16 16:15 redir.c
+-rwxrwx---+ 1 ansm None   1378 Apr 17 15:55 funix.exe.stackdump
+-rwxrwx---+ 1 ansm None   2035 Apr 16 16:15 waitpid.c
+-rwxrwx---+ 1 ansm None   4857 Apr 17 19:08 csc60mshell.c
+-rwxrwx---+ 1 ansm None   7024 Apr 16 16:15 read
+-rwxrwx---+ 1 ansm None   7563 Apr 16 16:15 q
+-rwxrwxr-x+ 1 ansm None  66862 Apr 16 16:23 read.exe
+-rwxrwxr-x+ 1 ansm None  76282 Apr 17 19:13 funix.exe
+-rwxrwx---+ 1 ansm None 788659 Apr 16 16:15 prompt.pdf
+normal termination with status (0)
+csc60msh> ls > hello            echo "hello world" > hello_world
+normal termination with status (0)
+csc60msh> cat hello_world
+"hello world"
+normal termination with status (0)
+csc60msh> wc hello_world > wc_hello_world
+normal termination with status (0)
+csc60msh> wc wc_h	       ello_world
+funix: wello_world: command not found
+normal termination with status (255)
+csc60msh> l ls |
+csc60shell: pipe syntax error
+normal termination with status (1)
+csc60msh> |
+funix: |: command not found
+normal termination with status (255)
+csc60msh> ||||
+funix: ||||: command not found
+normal termination with status (255)
+csc60msh> exit    ls > hel   
+Output redirection error
+normal termination with status (255)
+csc60msh> ls <
+Input Redirection error
+normal termination with status (255)
+csc60msh> M
+funix: M: command not found
+normal termination with status (255)
+csc60msh> <
+funix: <: command not found
+normal termination with status (255)
+csc60msh> exit
+]0;/cygdrive/c/Users/ansm/Downloads/funix
+[32mansm@x220 [33m/cygdrive/c/Users/ansm/Downloads/funix[0m
+$ exit
+exit
+
+Script done on Fri, Apr 17, 2015  7:15:19 PM
